@@ -52,19 +52,21 @@ def fourier_time_features_from_frequency(freq_str: str) -> List[TimeFeature]:
     offset = to_offset(freq_str)
     granularity = norm_freq_str(offset.name)
 
+    print(f"The offset {offset} and granularity {granularity}")
+
     features = {
         "M": ["weekofyear"],
         "W": ["daysinmonth", "weekofyear"],
         "D": ["dayofweek"],
         "B": ["dayofweek", "dayofyear"],
         "H": ["hour", "dayofweek"],
-        "min": ["minute", "hour", "dayofweek"],
+        "MIN": ["minute", "hour", "dayofweek"],
         "T": ["minute", "hour", "dayofweek"],
     }
 
-    assert granularity in features, f"freq {granularity} not supported"
+    assert ((granularity in features) or (granularity.upper() in features)), f"freq {granularity} not supported"
 
     feature_classes: List[TimeFeature] = [
-        FourierDateFeatures(freq=freq) for freq in features[granularity]
+        FourierDateFeatures(freq=freq) for freq in features[granularity.upper()]
     ]
     return feature_classes
